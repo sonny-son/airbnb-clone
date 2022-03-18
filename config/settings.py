@@ -45,6 +45,7 @@ PROJECT_APPS = [
     "users.apps.UsersConfig",
     "core.apps.CoreConfig",
     "rooms.apps.RoomsConfig",
+    "reviews.apps.ReviewsConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
