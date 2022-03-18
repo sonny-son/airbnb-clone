@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+# 관리자페이지의 기본 user admin 패널 불러오기
 from django.contrib.auth.admin import UserAdmin
 from . import models
 
