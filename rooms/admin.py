@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from . import models
 
 
@@ -16,6 +17,11 @@ class ItemAdmin(admin.ModelAdmin):
         return obj.rooms.count()
 
     pass
+
+
+class PhotoInline(admin.TabularInline):
+
+    model = models.Photo
 
 
 @admin.register(models.Room)
@@ -38,6 +44,7 @@ class RoomAdmin(admin.ModelAdmin):
         "instant_book",
         "count_amenities",
         "count_photos",
+        "total_rating",
     )
 
     list_filter = (
@@ -63,14 +70,13 @@ class RoomAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "Basic Info",
-            {"fields": ("name", "description", "country", "address", "price")},
+            {"fields": ("name", "description", "country", "city", "address", "price")},
         ),
         ("Times", {"fields": ("check_in", "check_out", "instant_book")}),
         ("Spaces", {"fields": ("guests", "beds", "bedrooms", "baths")}),
         (
             "More About the Space",
             {
-                "classes": ("collapse",),
                 "fields": ("amenities", "facilities", "house_rules"),
             },
         ),
@@ -79,10 +85,22 @@ class RoomAdmin(admin.ModelAdmin):
 
     filter_horizontal = ("amenities", "facilities", "house_rules")
 
+    # 어드민 안에 어드민
+    inlines = (PhotoInline,)
+
+    # host를 검색할 수 있게함.
+    raw_id_fields = ("host",)
+
 
 @admin.register(models.Photo)
 class PhotoAdmin(admin.ModelAdmin):
 
     """Photo Admin Definition"""
 
-    pass
+    list_display = ("__str__", "get_thumbnail")
+
+    def get_thumbnail(self, obj):
+        # Django에게 해당 입력값이 안전하다고 알려줌
+        return mark_safe(f'<img width="50px" src="{obj.file.url}" />')
+
+    get_thumbnail.short_description = "Thumbnail"

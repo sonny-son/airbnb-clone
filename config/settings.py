@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# 내 어플리케이션의 절대 경로
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -23,6 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "-km*7x0yse@2$m!4c06@oce$&7z4fgwghkyqm05*rnq_0m#1xu"
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# 현재 내가 프로덕션 모드인지 개발자 모드인지 설정
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -135,3 +137,9 @@ STATIC_URL = "/static/"
 
 # 관리자 페이지의 User 형식이 Defualt User 형식을 따르는 것이아니라 새롭게 생성한 applications(users)의 User를 따를 것이라 표시
 AUTH_USER_MODEL = "users.User"
+
+# 미디어 파일이 어디에 저장되는지 알려줌.
+MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+
+# 미디어 파일의 url을 설정 앞뒤 /로 절대경로로 설정
+MEDIA_URL = "/media/"

@@ -16,6 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+# setting.py에 접근하기 위해서 필요
+from django.conf import settings
+
+# url과 폴더를 연결해주는데 사용
+from django.conf.urls.static import static
+
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
+
+if settings.DEBUG:
+    # url과 folder 연결
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

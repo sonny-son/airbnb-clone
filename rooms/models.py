@@ -44,7 +44,8 @@ class HouseRule(AbstractItem):
 
     """HouseRule Model Definition"""
 
-    pass
+    class Meta:
+        verbose_name = "House Rules"
 
 
 class Photo(core_models.TimeStampedModel):
@@ -52,7 +53,7 @@ class Photo(core_models.TimeStampedModel):
     """Photo Model Definition"""
 
     caption = models.CharField(max_length=80)
-    file = models.ImageField()
+    file = models.ImageField(upload_to="room_photos")
     room = models.ForeignKey("Room", related_name="photos", on_delete=models.CASCADE)
 
     def __str__(self):
@@ -86,5 +87,17 @@ class Room(core_models.TimeStampedModel):
     facilities = models.ManyToManyField("Facility", related_name="rooms", blank=True)
     house_rules = models.ManyToManyField("HouseRule", related_name="rooms", blank=True)
 
+    def total_rating(self):
+        # .reviews : room을 foriegnkey로 삼는 대상
+        all_reviews = self.reviews.all()
+        all_ratings = 0
+        for review in all_reviews:
+            all_ratings += review.rating_average()
+        return all_ratings / len(all_reviews)
+
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.city = str.capitalize(self.city)
+        super().save(*args, **kwargs)
