@@ -56,6 +56,7 @@ class RoomAdmin(admin.ModelAdmin):
         "house_rules",
         "city",
         "country",
+        "room_type",
     )
 
     search_fields = ("=city", "^host__username")
@@ -63,8 +64,12 @@ class RoomAdmin(admin.ModelAdmin):
     def count_amenities(self, obj):
         return obj.amenities.count()
 
+    count_amenities.short_description = "Amenity Count"
+
     def count_photos(self, obj):
         return obj.photos.count()
+
+    count_photos.short_description = "Photo Count"
 
     # 관리자 페이지 내부
     fieldsets = (
