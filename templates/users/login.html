@@ -10,7 +10,6 @@
 {% block content %}
 
     <form method="POST" action="{% url "users:login" %}">
-        # csrf 공격을 못하게 막는 것
         {% csrf_token %}
         {{form.as_p}}
         <button>Login</button>
