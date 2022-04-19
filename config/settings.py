@@ -143,3 +143,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
 # 미디어 파일의 url을 설정 앞뒤 /로 절대경로로 설정
 MEDIA_URL = "/media/"
+
+# Email Configuration
+EMAIL_HOST = "smtp.mailgun.org"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get("MAILGUN_USERNAME")
+EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
+EMAIL_FROM = "airbnb@sandbox567fd71108304c099c22a9ac40cfe79f.mailgun.org"
