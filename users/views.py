@@ -128,7 +128,7 @@ def github_callback(request):
 
 def kakao_login(request):
     client_id = os.environ.get("KAKAO_ID")
-    redirect_uri = "https://127.0.0.1:8000/users/login/kakao/callback"
+    redirect_uri = "http://127.0.0.1:8000/users/login/kakao/callback"
     return redirect(
         f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
     )
@@ -142,45 +142,44 @@ def kakao_callback(request):
     try:
         code = request.GET.get("code")
         client_id = os.environ.get("KAKAO_ID")
-        redirect_uri = "https://127.0.0.1:8000/users/login/kakao/callback"
+        redirect_uri = "http://127.0.0.1:8000/users/login/kakao/callback"
         token_request = requests.post(
             f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={code}"
         )
         token_json = token_request.json()
-        print(token_json)
         error = token_json.get("error", None)
         if error is not None:
             raise KakaoException()
         access_token = token_json.get("access_token")
-        profile_request = requests.get(
-            "https://kapi.kakao.com/v1/user/me",
+        account_request = requests.get(
+            "https://kapi.kakao.com/v2/user/me",
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        profile_json = profile_request.json()
-        email = profile_json.get("kaccount_email", None)
+        account_json = account_request.json().get("kakao_account")
+        profile_json = account_json.get("profile")
+        email = account_json.get("email", None)
         if email is None:
             raise KakaoException()
-        properties = profile_json.get("properties")
-        nickname = properties.get("nickname")
-        profile_image = properties.get("profile_image")
+        profile_json = account_json.get("profile")
+        nickname = profile_json.get("nickname")
+        profile_image_url = profile_json.get("profile_image_url")
         try:
             user = models.User.objects.get(email=email)
-            if user.login_method != models.User.LOGING_KAKAO:
+            if user.login_method != models.User.LOGIN_KAKAO:
                 raise KakaoException()
         except models.User.DoesNotExist:
             user = models.User.objects.create(
                 email=email,
                 username=email,
                 first_name=nickname,
-                login_method=models.User.LOGING_KAKAO,
+                login_method=models.User.LOGIN_KAKAO,
                 email_verified=True,
             )
             user.set_unusable_password()
             user.save()
-            if profile_image is not None:
-                photo_request = requests.get(profile_image)
+            if profile_image_url is not None:
                 user.avatar.save(
-                    f"{nickname}-avatar", ContentFile(photo_request.content)
+                    f"{nickname}-avatar", ContentFile(profile_image_url.content)
                 )
         login(request, user)
         return redirect(reverse("core:home"))
