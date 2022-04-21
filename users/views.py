@@ -178,8 +178,9 @@ def kakao_callback(request):
             user.set_unusable_password()
             user.save()
             if profile_image_url is not None:
+                profile_image = requests.get(profile_image_url)
                 user.avatar.save(
-                    f"{nickname}-avatar", ContentFile(profile_image_url.content)
+                    f"{nickname}-avatar", ContentFile(profile_image.content)
                 )
         login(request, user)
         return redirect(reverse("core:home"))
