@@ -1,26 +1,35 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>{% block page_title %}{% endblock page_title %}| Nbnb</title>
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <title>{% block page_title %}{% endblock page_title %}| Nbnb</title>
+    </head>
 
-<body>
+    <body class="text-red-800">
+        <header class="container max-w-full flex">
+            <div class="flex">
+                <a href="{% url "core:home" %}" class="mr-6">
+                    <img class="w-8" src = "{% static 'img/logo.png' %}" />
+                </a>
+                {% block search-bar %}
+                <form method="get" action="{% url "rooms:search" %}">
+                    <input name="city" placeholder="Search by City" />
+                </form>
+                {% endblock search-bar %}
+            </div>
+            {% include "partials/nav.html" %}
+        </header>
+        &copy; Nbnb
 
-    <header>
-        {% include "partials/nav.html" %}
-        <form method="get" action="{% url "rooms:search" %}">
-            <input name="city" placeholder="Search by City" />
-        </form>
-    </header>
-    &copy; Nbnb
+        {% block content %}{% endblock %}
 
-    {% block content %}{% endblock %}
-
-    {% include "partials/footer.html" %}
-</body>
+        {% include "partials/footer.html" %}
+    </body>
 
 </html>

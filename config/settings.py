@@ -135,6 +135,8 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 # 관리자 페이지의 User 형식이 Defualt User 형식을 따르는 것이아니라 새롭게 생성한 applications(users)의 User를 따를 것이라 표시
 AUTH_USER_MODEL = "users.User"
 

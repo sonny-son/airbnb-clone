@@ -11,13 +11,16 @@
   },
   "homepage": "https://github.com/sonny-son/airbnb-clone#readme",
   "devDependencies": {
-    "autoprefixer": "^10.4.4",
     "gulp": "^4.0.2",
     "gulp-csso": "^4.0.1",
     "gulp-postcss": "^9.0.1",
     "gulp-sass": "^5.1.0",
     "node-sass": "^7.0.0",
-    "sass": "^1.50.1",
+    "tailwind": "^4.0.0"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.5",
+    "postcss": "^8.4.12",
     "tailwindcss": "^3.0.24"
   }
 }
