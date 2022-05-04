@@ -5,9 +5,15 @@ from . import models
 
 class LoginForm(forms.Form):
 
-    email = forms.EmailField()
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={"placeholder": "Email", "class": "input mb-3"})
+    )
     # passwordinput 비밀번호가 안보이게 가리게함
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"placeholder": "Password", "class": "input mb-3"}
+        )
+    )
 
     def clean(self):
         email = self.cleaned_data.get("email")
@@ -26,9 +32,26 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         model = models.User
         fields = ("first_name", "last_name", "email")
+        widgets = {
+            "first_name": forms.TextInput(
+                attrs={"placeholder": "First Name", "class": "input"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"placeholder": "Last Name", "class": "input"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"placeholder": "Email Name", "class": "input"}
+            ),
+        }
 
-    password = forms.CharField(widget=forms.PasswordInput)
-    password1 = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Password", "class": "input"})
+    )
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"placeholder": "Confirm Password", "class": "input"}
+        )
+    )
 
     def clean_password1(self):
         password = self.cleaned_data.get("password")
