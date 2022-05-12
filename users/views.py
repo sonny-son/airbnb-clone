@@ -1,6 +1,6 @@
 import os
 import requests
-from django.views.generic import FormView
+from django.views.generic import FormView, DetailView, UpdateView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
@@ -45,6 +45,40 @@ class SignUpView(FormView):
             login(self.request, user)
         user.verify_email()
         return super().form_valid(form)
+
+
+class UpdateProfileView(FormView):
+    template_name = "users/update_profile.html"
+    form_class = forms.UpdateProfileForm
+    success_url = reverse_lazy("core:home")
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    # view->form으로 파라미터 보내기
+    def get_form_kwargs(self):
+        kwargs = super(UpdateProfileView, self).get_form_kwargs()
+        # update the kwargs for the form init method with yours
+        kwargs.update(self.kwargs)
+        return kwargs
+
+
+class UpdatePasswordView(FormView):
+    template_name = "users/update_password.html"
+    form_class = forms.UpdatePasswordForm
+    success_url = reverse_lazy("core:home")
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    # view->form으로 파라미터 보내기
+    def get_form_kwargs(self):
+        kwargs = super(UpdatePasswordView, self).get_form_kwargs()
+        # update the kwargs for the form init method with yours
+        kwargs.update(self.kwargs)
+        return kwargs
 
 
 def complete_verification(request, key):
@@ -193,3 +227,9 @@ def kakao_callback(request):
     except KakaoException as e:
         messages.error(request, e)
         return redirect(reverse("users:login"))
+
+
+class UserProfileView(DetailView):
+
+    model = models.User
+    context_object_name = "user_obj"

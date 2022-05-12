@@ -78,3 +78,98 @@ class SignUpForm(forms.ModelForm):
         user.username = email
         user.set_password(password)
         user.save()
+
+
+class UpdateProfileForm(forms.ModelForm):
+    # view에서 보내는 pk 받기
+    def __init__(self, pk, *args, **kwargs):
+        # we explicit define the foo keyword argument, cause otherwise kwargs will
+        # contain it and passes it on to the super class, who fails cause it's not
+        # aware of a foo keyword argument.
+        super(UpdateProfileForm, self).__init__(*args, **kwargs)
+        self.pk = pk
+
+    class Meta:
+        model = models.User
+        fields = ("first_name", "last_name", "email")
+        widgets = {
+            "first_name": forms.TextInput(
+                attrs={"placeholder": "First Name", "class": "input"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"placeholder": "Last Name", "class": "input"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"placeholder": "Email Name", "class": "input"}
+            ),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        try:
+            models.User.objects.get(email=email)
+            raise forms.ValidationError(
+                "That email is already taken", code="existing_user"
+            )
+        except models.User.DoesNotExist:
+            return email
+
+    def save(self):
+        user = models.User.objects.get(pk=self.pk)
+        email = self.cleaned_data.get("email")
+        first_name = self.cleaned_data.get("first_name")
+        last_name = self.cleaned_data.get("last_name")
+        user.username = email
+        if first_name:
+            user.first_name = first_name
+            print(first_name)
+        if last_name:
+            user.last_name = last_name
+        user.save()
+
+
+class UpdatePasswordForm(forms.Form):
+    def __init__(self, pk, *args, **kwargs):
+        # we explicit define the foo keyword argument, cause otherwise kwargs will
+        # contain it and passes it on to the super class, who fails cause it's not
+        # aware of a foo keyword argument.
+        super(UpdatePasswordForm, self).__init__(*args, **kwargs)
+        self.pk = pk
+
+    current_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"placeholder": "Current Password", "class": "input"}
+        )
+    )
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"placeholder": "New Password", "class": "input"}
+        )
+    )
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"placeholder": "Confirm New Password", "class": "input"}
+        )
+    )
+
+    def clean_current_password(self):
+        user = models.User.objects.get(pk=self.pk)
+        current_password = self.cleaned_data.get("current_password")
+        if user.check_password(current_password):
+            return current_password
+        else:
+            raise forms.ValidationError("confirmation isn't matched")
+
+    def clean_new_password1(self):
+        new_password = self.cleaned_data.get("new_password")
+        new_password1 = self.cleaned_data.get("new_password1")
+        if new_password != new_password1:
+            raise forms.ValidationError("Password confirmation does not match")
+        else:
+            return new_password
+
+    def save(self):
+        user = models.User.objects.get(pk=self.pk)
+        new_password = self.cleaned_data.get("new_password")
+        user.set_password(new_password)
+        user.save()
