@@ -1,6 +1,7 @@
 import os
 import requests
-from django.views.generic import FormView, DetailView, UpdateView
+from django.views.generic import FormView, DetailView
+from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
@@ -64,21 +65,25 @@ class UpdateProfileView(FormView):
         return kwargs
 
 
-class UpdatePasswordView(FormView):
+class UpdatePasswordView(PasswordChangeView):
     template_name = "users/update_password.html"
-    form_class = forms.UpdatePasswordForm
     success_url = reverse_lazy("core:home")
 
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
-
-    # view->form으로 파라미터 보내기
-    def get_form_kwargs(self):
-        kwargs = super(UpdatePasswordView, self).get_form_kwargs()
-        # update the kwargs for the form init method with yours
-        kwargs.update(self.kwargs)
-        return kwargs
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields["old_password"].widget.attrs = {
+            "placeholder": "Current password",
+            "class": "input",
+        }
+        form.fields["new_password1"].widget.attrs = {
+            "placeholder": "New password",
+            "class": "input",
+        }
+        form.fields["new_password2"].widget.attrs = {
+            "placeholder": "Confirm new password",
+            "class": "input",
+        }
+        return form
 
 
 def complete_verification(request, key):

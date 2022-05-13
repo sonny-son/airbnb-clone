@@ -1,8 +1,22 @@
 @tailwind base;
 @tailwind components;
 
+.input {
+  @apply rounded-sm py-5 mb-3 font-light text-lg w-full text-left border border-gray-600 px-5;
+  &:focus {
+    @apply outline-none border-teal-500;
+  }
+}
+
 .search-box {
+  @apply border px-5 py-3 font-medium rounded-sm w-full shadow-md;
   transition: box-shadow 0.2s linear;
+  &:hover {
+    @apply shadow-lg;
+  }
+  &:focus {
+    @apply outline-none;
+  }
 }
 
 .nav_link {
@@ -21,13 +35,6 @@
 
 .btn-link {
   @apply text-center py-3 rounded-lg font-light text-lg w-full text-white bg-red-500;
-}
-
-.input {
-  @apply rounded-sm py-5 mb-3 font-light text-lg w-full text-left border border-gray-600 px-5;
-  &:focus {
-    @apply outline-none border-teal-500;
-  }
 }
 
 .has_error {
